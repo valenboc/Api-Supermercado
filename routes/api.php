@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
 
 Route::get('/ciudades/all', 'App\Http\Controllers\CiudadesController@index');
 
@@ -12,5 +13,11 @@ Route::put('/supermercado/update/{id}', 'App\Http\Controllers\SupermercadoContro
 Route::delete('/supermercado/delete/{id}', 'App\Http\Controllers\SupermercadoController@destroy');
 
 
-
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'auth'
+], function ($router) {
+    Route::post('/user/register', [AuthController::class, 'register'])->name('register');
+    Route::post('/user/login', [AuthController::class, 'login'])->name('login');
+});
 
