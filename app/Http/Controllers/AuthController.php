@@ -7,7 +7,6 @@ use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
   
-  
 class AuthController extends Controller{
  
     public function register(Request $request){
@@ -15,7 +14,7 @@ class AuthController extends Controller{
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|between:2,100',
             'email' => 'required|string|email|max:100|unique:users',
-            'password' => 'required|string|confirmed|min:6',
+            'password' => 'required|string|confirmed|min:8',
         ],[
             'email.email' => 'El correo electrónico debe ser una dirección válida.',
             'password.confirmed' => 'La confirmación de la contraseña no coincide.',
@@ -31,29 +30,36 @@ class AuthController extends Controller{
         ));
 
         return response()->json([
-            'message' => 'User successfully registered',
+            'message' => 'Usuario registrado exitosamente',
             'user' => $user,
         ], 201);
     }
   
 
-    public function login()
-    {
+    public function login(){
         $credentials = request(['email', 'password']);
   
         if (! $token = auth()->attempt($credentials)) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+            return response()->json(['error' => 'Inautorizado'], 401);
         }
   
         return $this->respondWithToken($token);
     }
   
-  
-    protected function respondWithToken($token)
-    {
+    protected function respondWithToken($token){
         return response()->json([
+            'message' => 'Inició sesión correctamente',
             'access_token' => $token,
             'token_type' => 'bearer',
         ]);
+    }
+
+    public function me(){
+        return response()->json(auth()->user());
+    }
+
+    public function logout(){
+        auth()->logout();
+        return response()->json(['message' => 'Cerró sesión exitosamente']);
     }
 }

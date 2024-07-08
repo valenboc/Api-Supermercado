@@ -1,10 +1,8 @@
 <?php
 namespace App\Http\Middleware;
 use Closure;
-class Cors
-{
-    public function handle($request, Closure $next)
-    {
+class Cors{
+    public function handle($request, Closure $next){
         return $next($request)
             //Url a la que se le dará acceso en las peticiones
             ->header("Access-Control-Allow-Origin", "http://localhost:3000")

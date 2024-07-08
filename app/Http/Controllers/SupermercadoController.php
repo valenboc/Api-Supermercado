@@ -7,21 +7,19 @@ use App\Models\Ciudades;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class SupermercadoController extends Controller
-{
+class SupermercadoController extends Controller{
+
     public function store(Request $request){
-        // Validación de la solicitud
         $validator = Validator::make($request->all(), [
             'Nombre' => 'required|string|max:255',
             'NIT' => 'required|string|max:255|unique:supermercados,NIT',
             'Direccion' => 'required|string|max:255',
-            'Logo' => 'required|string|max:255',
+            'Logo' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
             'Longitud' => 'required|string|max:255',
             'Latitud' => 'required|string|max:255',
             'ID_ciudad' => 'required|exists:ciudades,ID_ciudad'
         ]);
 
-        // Si la validación falla, se devuelve un mensaje de error
         if ($validator->fails()){
             $data = [
                 'message' => 'Error en la validacion de los datos',
@@ -31,17 +29,17 @@ class SupermercadoController extends Controller
             return response()->json($data, 400);
         }
 
-        // Creación de una nueva instancia del modelo Supermercado
+        $logoPath = $request->file('Logo')->store('supermercados_logos', 'public');
+
         $supermercado = new Supermercado();
         $supermercado->Nombre = $request->Nombre;
         $supermercado->NIT = $request->NIT;
         $supermercado->Direccion = $request->Direccion;
-        $supermercado->Logo = $request->Logo;
+        $supermercado->Logo =  $logoPath;
         $supermercado->Longitud = $request->Longitud;
         $supermercado->Latitud = $request->Latitud;
         $supermercado->ID_ciudad = $request->ID_ciudad;
         
-        // Guardar el supermercado en la base de datos
         if (!$supermercado->save()){
             $data = [
                 'message' => 'Error al crear el supermercado',
@@ -50,7 +48,6 @@ class SupermercadoController extends Controller
             return response()->json($data, 500);
         }
 
-        // Si la creación es exitosa, se devuelve el nuevo supermercado con un estado HTTP 201
         return response()->json($supermercado, 201);
     }
 
@@ -71,8 +68,7 @@ class SupermercadoController extends Controller
         return response()->json($supermercados, 200);
     }
 
-    public function update($id, Request $request)
-    {
+    public function update($id, Request $request){
         // Busca el supermercado usando la clave primaria personalizada
         $supermercado = Supermercado::find($id);
 
@@ -88,7 +84,7 @@ class SupermercadoController extends Controller
             'Nombre' => 'required',
             'NIT' => 'required|unique:supermercados,NIT,' . $id . ',ID_supermercado',
             'Direccion' => 'required',
-            'Logo' => 'required',
+            'Logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'Latitud' => 'required',
             'Longitud' => 'required',
             'ID_ciudad' => 'required|exists:ciudades,ID_ciudad'
