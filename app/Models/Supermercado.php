@@ -14,6 +14,6 @@ class Supermercado extends Model{
     protected $hidden = ['created_at', 'updated_at'];
     
     public function ciudad(){
-        return $this->belongsTo(Ciudades::class, 'ID_ciudad', 'ID_ciudad');
+        return $this->belongsTo(Ciudades::class, 'ID_ciudad');
     }
 }

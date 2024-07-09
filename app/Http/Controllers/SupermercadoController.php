@@ -6,6 +6,7 @@ use App\Models\Supermercado;
 use App\Models\Ciudades;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\JsonResponse;
 
 class SupermercadoController extends Controller{
 
@@ -51,22 +52,30 @@ class SupermercadoController extends Controller{
         return response()->json($supermercado, 201);
     }
 
-    public function index(){
-        // Obtiene todos los registros de la tabla 'supermercados'
-        $supermercados = Supermercado::all();
+    public function index(): JsonResponse{
+        $supermercados = Supermercado::with('ciudad')->get();
         
-        // Si no hay supermercados, retorna un mensaje indicando esto
-        if ($supermercados->isEmpty()){
+        if ($supermercados->isEmpty()) {
             $data = [
                 'message' => 'No hay supermercados en la base de datos',
                 'status' => 200
             ];
             return response()->json($data, 400);
         }
-        
-        // Si hay supermercados, retorna la lista con un estado HTTP 200
-        return response()->json($supermercados, 200);
-    }
+        $result = $supermercados->map(function ($supermercado) {
+            return [
+                'ID_supermercado' => $supermercado->ID_supermercado,
+                'Nombre' => $supermercado->Nombre,
+                'NIT' => $supermercado->NIT,
+                'Direccion' => $supermercado->Direccion,
+                'Logo' => $supermercado->Logo,
+                'Longitud' => $supermercado->Longitud,
+                'Latitud' => $supermercado->Latitud,
+                'ciudad' => $supermercado->ciudad
+            ];
+    });
+    return response()->json($result, 200);
+}
 
     public function update($id, Request $request){
         // Busca el supermercado usando la clave primaria personalizada
