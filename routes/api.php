@@ -13,7 +13,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/supermercados/all', [SuperMercadoController::class, 'index']);
     Route::post('/supermercado/new', [SuperMercadoController::class, 'store']);
     Route::get('/supermercado/porCiudad/{nombreCiudad}', [SuperMercadoController::class, 'buscarPorCiudad']);
-    Route::put('/supermercado/update/{id}', [SuperMercadoController::class, 'update']);
+    Route::post('/supermercado/update/{id}', [SuperMercadoController::class, 'update']);
     Route::delete('/supermercado/delete/{id}', [SuperMercadoController::class, 'destroy']);
 });
 

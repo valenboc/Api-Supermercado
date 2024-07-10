@@ -21,7 +21,6 @@ class CreateSupermercadosTable extends Migration{
             $table->string('Latitud');
             $table->unsignedBigInteger('ID_ciudad');
             $table->timestamps();
-
             $table->foreign('ID_ciudad')->references('ID_ciudad')->on('ciudades')->onDelete('cascade');
         });
     }

@@ -9,12 +9,10 @@ use Illuminate\Support\Facades\Validator;
 class CiudadesController extends Controller{
 
     public function store(Request $request){
-        // Validación de la solicitud
         $validator = Validator::make($request->all(), [
             'nombre' => 'required|unique:ciudades,nombre'
         ]);
 
-        // Si la validación falla, se devuelve un mensaje de error
         if ($validator->fails()){
             $data = [
                 'message' => 'Error en la validacion de los datos',
@@ -24,11 +22,9 @@ class CiudadesController extends Controller{
             return response()->json($data, 400);
         }
 
-        // Creación de una nueva instancia del modelo Ciudades
         $ciudad = new Ciudades();
         $ciudad->nombre = $request->nombre;
         
-        // Guardar la ciudad en la base de datos
         if (!$ciudad->save()){
             $data = [
                 'message' => 'Error al crear una ciudad',
@@ -40,7 +36,6 @@ class CiudadesController extends Controller{
             'message' => 'Ciudad creada correctamente',
             'ciudad' => $ciudad
         ];
-        // Si la creación es exitosa, se devuelve la nueva ciudad con un estado HTTP 201
         return response()->json($data, 201);
     }
 
